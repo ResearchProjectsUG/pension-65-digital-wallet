@@ -1,0 +1,47 @@
+RESEARCH IDEA SUBMISSION
+========================
+
+IDEA TITLE:
+Does Receiving Government Transfers Digitally Force Financial Inclusion? RDD at Pensión 65 Eligibility
+
+PAPER TYPE: Empirical
+
+RESEARCH QUESTION:
+Does crossing the Pensión 65 age eligibility threshold (age 65) cause a discrete jump in digital wallet adoption among Peruvian adults?
+
+HYPOTHESIS / MECHANISM:
+Governments worldwide are betting that digitizing cash transfers will force financial inclusion — but does it actually work? The Pensión 65 age cutoff provides a rare clean experiment: does an exogenous push to receive money digitally cause wallet adoption, especially in rural areas with no physical payment alternatives?
+
+IDENTIFICATION STRATEGY:
+Sharp RDD using EDAD as the continuous running variable with cutoff at age 65 — Plot raw adoption rate by EDAD year-by-year to visually inspect the discontinuity at 65, run McCrary density test to rule out manipulation, then estimate rdrobust with CCT bandwidth and report the reduced-form jump
+
+DATA SOURCES:
+- ENAHO cross-section (EDAD variable) — N=117K ensures dense observations around age 65; MIDIS district coverage for first-stage validation (supplementary)
+
+DATA STRUCTURE: cross-sectional
+TIME COVERAGE: unknown
+
+
+*** IDENTIFICATION ASSESSMENT (MANDATORY) ***
+You MUST explicitly evaluate the following in your assessment:
+
+1. SOURCE OF EXOGENOUS VARIATION: What is the specific source of identifying
+   variation? (e.g., "policy reform in year X", "geographic discontinuity at
+   threshold Y", "instrument Z correlated with treatment but not outcome").
+   Is it clearly stated? Is it plausible?
+
+2. IDENTIFICATION THREATS: What are the main threats to identification?
+   (e.g., selection bias, reverse causality, omitted variables, violation of
+   exclusion restriction, non-parallel trends).
+
+3. PRE-TRENDS: Can parallel trends be tested with the available data?
+   If not, how does this affect credibility?
+
+4. IDENTIFICATION TIER: Classify the identification strategy:
+   - Tier 1 (STRONG): RCT, natural experiment, sharp RDD, DiD with pre-trends
+   - Tier 2 (GOOD): IV with strong first stage, fuzzy RDD, DiD without pre-trends
+   - Tier 3 (MODERATE): Panel FE exploiting within-variation, CRE
+   - Tier 4 (WEAK): Cross-sectional matching, OLS with controls, decompositions
+
+Include these assessments in your evaluation and factor them into your score.
+A Tier 4 identification strategy should not score above 6/10 regardless of novelty.

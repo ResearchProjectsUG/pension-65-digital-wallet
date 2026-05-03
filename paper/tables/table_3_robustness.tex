@@ -1,0 +1,32 @@
+\begin{threeparttable}
+\begin{tabular}{l ccccc}
+\toprule
+Test & Estimate & SE & 95\% CI & BW & N \\
+\midrule
+\multicolumn{6}{l}{\textit{Panel A: Bandwidth sensitivity}} \\
+  H Half & -0.0056 & 0.0221 & [-0.0499, 0.0370] & 7.12 & 14{,}803 \\
+  H Optimal & -0.0056 & 0.0179 & [-0.0397, 0.0306] & 14.24 & 27{,}809 \\
+  H Double & -0.0204 & 0.0137 & [-0.0272, 0.0264] & 28.48 & 50{,}989 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{Panel B: Donut-hole}} \\
+  $\pm$0.5 yr & -0.0039 & 0.0209 & [-0.0376, 0.0443] & 14.24 & 26{,}750 \\
+  $\pm$1.0 yr & -0.0125 & 0.0242 & [-0.0622, 0.0329] & 14.24 & 24{,}744 \\
+  $\pm$2.0 yr & -0.0045 & 0.0321 & [-0.0485, 0.0774] & 14.24 & 22{,}829 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{Panel C: Polynomial}} \\
+  Linear & -0.0056 & 0.0165 & [-0.0336, 0.0310] & 14.24 & 27{,}809 \\
+  Quadratic & -0.0051 & 0.0208 & [-0.0485, 0.0332] & 13.92 & 26{,}035 \\
+\addlinespace
+\multicolumn{6}{l}{\textit{Panel D: Placebo (covariates as outcomes)}} \\
+  INTERNET\_HOGAR & 0.0139 & 0.0487 & [-0.0615, 0.1296] & 15.23 & 29{,}668 \\
+  SMARTPHONE & 0.0138 & 0.0246 & [-0.0218, 0.0748] & 14.29 & 27{,}809 \\
+  TIENE\_BILLETERA & -0.0067 & 0.0006 & [-0.0083, -0.0062] & 7.41 & 99{,}667 \\
+  TIENE\_BILLETERA & 0.0080 & 0.0148 & [-0.0176, 0.0403] & 7.21 & 99{,}667 \\
+\addlinespace
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} All specifications use local linear regression with triangular kernel and MSE-optimal bandwidth (h$^{\ast}\!=\!14.24$ unless noted). Robust bias-corrected confidence intervals reported. Donut-hole specifications drop observations within $\pm 0.5$, $\pm 1.0$, and $\pm 2.0$ years of the cutoff to assess sensitivity to integer-rounding heaping at age 65. \textit{Panel D} uses pre-determined covariates (\texttt{INTERNET\_HOGAR}, \texttt{SMARTPHONE}) as outcomes with their own outcome-specific MSE-optimal bandwidths (15.23 and 14.29, respectively); these estimates therefore differ slightly from the corresponding rows in Table~\ref{tab:balance}, which re-estimates the same covariate jumps at the \emph{fixed} primary-outcome bandwidth ($h^{\ast}\!=\!14.24$) so that all balance tests share a common identifying window. We report both because the placebo logic (Panel D) and the balance-test logic (Table~\ref{tab:balance}) are conceptually distinct: Panel D asks whether each covariate exhibits a placebo discontinuity at its own optimal window; Table~\ref{tab:balance} asks whether the covariates are balanced \emph{within the bandwidth used for the primary estimates}. Estimates close to zero in either presentation support the no-discontinuity-in-pretreatment-characteristics assumption.
+\end{tablenotes}
+\end{threeparttable}

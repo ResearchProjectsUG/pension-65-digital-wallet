@@ -1,0 +1,17 @@
+\begin{threeparttable}
+\begin{tabular}{l ccccc}
+\toprule
+Covariate & RD Estimate & SE & 95\% CI & BW & N \\
+\midrule
+  INTERNET\_HOGAR & 0.0147 & 0.0489 & [-0.0607, 0.1308] & 14.24 & 27{,}809 \\
+  SMARTPHONE & 0.0139 & 0.0256 & [-0.0146, 0.0857] & 14.24 & 27{,}809 \\
+  POBREZA & 0.0003 & 0.0475 & [-0.0716, 0.1144] & 14.24 & 27{,}809 \\
+  INGRESO\_PC & -47.1233 & 1339.4426 & [-2078.5952, 3171.9232] & 14.24 & 27{,}809 \\
+  NIVEL\_EDUCATIVO & 0.1176 & 0.3061 & [-0.4261, 0.7740] & 14.24 & 27{,}325 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} RDD estimates with each covariate as the outcome. Tests are restricted to observations within the MSE-optimal bandwidth (h$^{\ast}\!=\!14.24$). A statistically significant estimate would indicate a discontinuity in pre-determined characteristics, threatening RD validity. $^{*}$ 95\% CI excludes zero. None of the covariates exhibits a discontinuity at the cutoff at the 95\% level (all CIs include zero), supporting the local continuity assumption. The \texttt{SMARTPHONE} CI is the closest case: the lower bound is essentially zero and the interval is asymmetric toward positive values, leaving open the possibility of an up-to-8.6 percentage-point smartphone gap at the cutoff that we cannot statistically rule out; we therefore caution that the smartphone-balance result is the weakest evidence in this table rather than treating it as a clean null. Slight numerical differences with Table~\ref{tab:robustness} Panel~D arise because Panel~D uses outcome-specific MSE-optimal bandwidths (15.23 / 14.29) while this table fixes the bandwidth at the primary outcome's $h^{\ast}\!=\!14.24$.
+\end{tablenotes}
+\end{threeparttable}

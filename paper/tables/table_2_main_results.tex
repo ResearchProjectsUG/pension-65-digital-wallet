@@ -1,0 +1,78 @@
+\begin{threeparttable}
+\begin{tabular}{l ccc}
+\toprule
+  & TIENE\_BILLETERA & USA\_BILLETERA \\
+\midrule
+\addlinespace
+\multicolumn{3}{l}{\textit{baseline}} \\
+  Estimate & -0.0056 & 0.0066 \\
+  SE (robust) & (0.0165) & (0.0180) \\
+  95\% CI & [-0.0336, 0.0310] & [-0.0338, 0.0368] \\
+  N / BW & 27{,}809 / 14.24 & 33{,}267 / 17.29 \\
+  Method & rdrobust & rdrobust \\
+\addlinespace
+\multicolumn{3}{l}{\textit{with\_covariates}} \\
+  Estimate & -0.0270 & 0.0072 \\
+  SE (robust) & (0.0053) & (0.0047) \\
+  95\% CI & [-0.0373, -0.0167] & [-0.0020, 0.0164] \\
+  N / BW & 59{,}649 / 34.22 & 59{,}649 / 34.22 \\
+  Method & statsmodels\_WLS & statsmodels\_WLS \\
+\addlinespace
+\multicolumn{3}{l}{\textit{extended\_covariates}} \\
+  Estimate & -0.0257 & 0.0084 \\
+  SE (robust) & (0.0054) & (0.0048) \\
+  95\% CI & [-0.0363, -0.0152] & [-0.0010, 0.0178] \\
+  N / BW & 57{,}039 / 33.46 & 57{,}039 / 33.46 \\
+  Method & statsmodels\_WLS & statsmodels\_WLS \\
+\addlinespace
+\multicolumn{3}{l}{\textit{het\_POBREZA\_low}} \\
+  Estimate & -0.0056 & 0.0066 \\
+  SE (robust) & (0.0165) & (0.0180) \\
+  95\% CI & [-0.0336, 0.0310] & [-0.0338, 0.0368] \\
+  N / BW & 27{,}809 / 14.24 & 33{,}267 / 17.29 \\
+  Method & rdrobust & rdrobust \\
+\addlinespace
+\multicolumn{3}{l}{\textit{het\_INTERNET\_HOGAR\_low}} \\
+  Estimate & 0.0035 & 0.0070 \\
+  SE (robust) & (0.0141) & (0.0087) \\
+  95\% CI & [-0.0200, 0.0351] & [-0.0139, 0.0200] \\
+  N / BW & 16{,}580 / 16.53 & 14{,}665 / 14.14 \\
+  Method & rdrobust & rdrobust \\
+\addlinespace
+\multicolumn{3}{l}{\textit{het\_INTERNET\_HOGAR\_high}} \\
+  Estimate & -0.0210 & 0.0010 \\
+  SE (robust) & (0.0276) & (0.0224) \\
+  95\% CI & [-0.0740, 0.0343] & [-0.0507, 0.0371] \\
+  N / BW & 14{,}045 / 15.02 & 14{,}045 / 15.53 \\
+  Method & rdrobust & rdrobust \\
+\addlinespace
+\multicolumn{3}{l}{\textit{het\_SMARTPHONE\_low}} \\
+  Estimate & -0.0056 & 0.0066 \\
+  SE (robust) & (0.0165) & (0.0180) \\
+  95\% CI & [-0.0336, 0.0310] & [-0.0338, 0.0368] \\
+  N / BW & 27{,}809 / 14.24 & 33{,}267 / 17.29 \\
+  Method & rdrobust & rdrobust \\
+\addlinespace
+\multicolumn{3}{l}{\textit{Heterogeneity by SISFOH (POBREZA)}} \\
+\addlinespace
+  Extreme-poor (=1) (TIENE\_BILLETERA)  & 0.0248 & --- \\
+  SE (robust)         & (0.0225) & --- \\
+  95\% CI             & [-0.0205, 0.0678] & --- \\
+  $N_h$               & 1{,}229 & --- \\
+\addlinespace
+  Non-extreme-poor (=2) (TIENE\_BILLETERA)  & 0.0090 & --- \\
+  SE (robust)         & (0.0181) & --- \\
+  95\% CI             & [-0.0156, 0.0554] & --- \\
+  $N_h$               & 3{,}975 & --- \\
+\addlinespace
+  Non-poor (=3) (TIENE\_BILLETERA)  & -0.0097 & --- \\
+  SE (robust)         & (0.0207) & --- \\
+  95\% CI             & [-0.0525, 0.0285] & --- \\
+  $N_h$               & 22{,}605 & --- \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} \textit{Baseline} rows use local linear RDD (\texttt{rdrobust}) with triangular kernel and MSE-optimal bandwidth (h$^{\ast}\!\approx\!14$--$17$); robust bias-corrected standard errors in parentheses; confidence intervals are bias-corrected robust. \textit{With covariates} and \textit{Extended covariates} rows use \emph{weighted least squares} (\texttt{statsmodels\_WLS}) at $h\!=\!34.22$ years (about 2.4$\times$ the MSE-optimal local-linear bandwidth)---this was a fallback when \texttt{rdrobust} failed under memory constraints; the WLS specification therefore identifies a different estimand (a global parametric WLS regression with covariates), is \emph{not} a covariate-adjusted local-linear RDD, and should not be treated as ``the RDD result.'' The estimator change and the bandwidth change are confounded; comparisons between WLS and \texttt{rdrobust} rows must be made with caution. SISFOH heterogeneity panel splits the bandwidth-restricted sample by household poverty classification (1$=$extreme-poor, 2$=$non-extreme-poor, 3$=$non-poor); the extreme-poor subsample is the policy-relevant Pensi\'on 65--eligible group. \texttt{USA\_BILLETERA} cells in the SISFOH panel are '---' because the bandwidth-restricted subsamples contain essentially zero active wallet users, yielding degenerate inference. None of the bandwidth-restricted RDD estimates is statistically distinguishable from zero at the 95\% level. RDD estimates do not apply ENAHO survey expansion weights; see Section~\ref{sec:strategy} for caveats on population-level interpretation. '---' indicates estimate unavailable.
+\end{tablenotes}
+\end{threeparttable}

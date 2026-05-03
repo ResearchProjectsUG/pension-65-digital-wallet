@@ -1,0 +1,23 @@
+\begin{threeparttable}
+\begin{tabular}{l cccc cccc}
+\toprule
+& \multicolumn{4}{c}{Above Threshold (Treated)} & \multicolumn{4}{c}{Below Threshold (Control)} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+Variable & Mean & SD & N & --- & Mean & SD & N & --- \\
+\midrule
+  TIENE\_BILLETERA & 0.0535 & 0.2251 & 14088 & --- & 0.0800 & 0.2713 & 99667 & --- \\
+  USA\_BILLETERA & 0.0319 & 0.1757 & 14088 & --- & 0.1794 & 0.3837 & 99667 & --- \\
+  INTERNET\_HOGAR & 0.4174 & 0.4932 & 14088 & --- & 0.4641 & 0.4987 & 99667 & --- \\
+  SMARTPHONE & 0.8308 & 0.3749 & 14088 & --- & 0.8695 & 0.3369 & 99667 & --- \\
+  POBREZA & 2.7375 & 0.5488 & 14088 & --- & 2.6814 & 0.5802 & 99667 & --- \\
+  INGRESO\_PC & 13454.4487 & 13062.9359 & 14088 & --- & 11416.5063 & 11201.2608 & 99667 & --- \\
+  NIVEL\_EDUCATIVO & 4.3875 & 3.4343 & 13793 & --- & 5.4505 & 3.8990 & 92826 & --- \\
+\midrule
+  Observations & \multicolumn{4}{c}{14088} & \multicolumn{4}{c}{99667} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\small
+\item \textit{Notes:} Summary statistics for the full RDD analysis sample (all ages with valid running variable). 'Above Threshold' (treated$=1$) denotes individuals aged 65 and above (i.e., who cross the Pensi\'on 65 age-eligibility cutoff but are not necessarily Pensi\'on 65 recipients, since the program is fuzzy and conditional on SISFOH extreme-poverty classification); 'Below Threshold' (treated$=0$) denotes individuals under age 65. The treated/control split (14{,}088 vs.\ 99{,}667) is asymmetric because the control group spans the full age range below 65 while the treated group spans only ages 65 and above; within the bandwidth-restricted estimation window ($\pm h^{\ast}\!=\!\pm 14.24$ years of age 65) the split is 17{,}047 below and 10{,}762 above the cutoff, which is the support relevant for identification. The N column for \texttt{NIVEL\_EDUCATIVO} is smaller than for other variables because education level is missing for individuals below schooling age (the missingness is structural and observations are excluded only from rows where the variable enters as a covariate). RDD estimates do NOT apply ENAHO survey expansion weights (\texttt{FACPOB07} is present in the cleaned data but not used inside \texttt{rdrobust}); population-level interpretation should therefore be made with caution. '---' indicates unavailable data.
+\end{tablenotes}
+\end{threeparttable}
