@@ -4,7 +4,8 @@ digital (Pensión 65 RDD). Reúne los 5 scripts originales en un solo archivo
 PORTABLE que cualquiera que clone el repositorio pueda ejecutar.
 
 PIPELINE (5 fases):
-    Fase 0  — Descomprime los 3 raw_data_*.zip que están en data/clean/
+    Fase 0  — Descarga los 6 módulos ENAHO 2024 directamente desde INEI
+              (https://proyectos.inei.gob.pe/microdatos — Encuesta 966)
     Fase 1  — preprocess: mergea los 6 módulos ENAHO 2024 → enaho_2024_clean.csv
     Fase 2  — clean: filtra muestra RDD, centra running variable → clean_data.csv
     Fase 3  — main: estima el RDD principal (rdrobust + fallback WLS) → main_results.csv
@@ -18,7 +19,7 @@ REQUISITOS:
     - Python 3.9+
     - pandas, numpy, matplotlib, statsmodels (se intentan instalar si faltan)
     - rdrobust, rddensity, linearmodels (opcionales, hay fallback)
-    - Los 3 archivos data/clean/raw_data_*.zip presentes en el repo
+    - Conexión a internet para descargar de INEI (~38 MB de zips → ~511 MB de CSVs)
 
 OUTPUTS (todos relativos al repo):
     data/clean/enaho_2024_clean.csv
@@ -36,9 +37,11 @@ OUTPUTS (todos relativos al repo):
 
 from __future__ import annotations
 
-import os
+import io
 import sys
 import subprocess
+import urllib.request
+import urllib.error
 import warnings
 import zipfile
 from pathlib import Path
@@ -71,16 +74,31 @@ for d in (DATA_DIR, TABLES_DIR, FIGURES_DIR):
 # Reproducibilidad
 RANDOM_SEED = 42
 
-# ZIPs y sus contenidos esperados (relative to RAW_EXTRACTED_DIR)
-ZIP_FILES = ["raw_data_1.zip", "raw_data_2.zip", "raw_data_3.zip"]
-EXPECTED_CSVS = {
-    "m01": "raw_data_1/Enaho01-2024-100.csv",
-    "m02": "raw_data_1/Enaho01-2024-200.csv",
-    "m18": "raw_data_1/Enaho01-2024-612.csv",
-    "m03": "raw_data_2/Enaho01A-2024-300.csv",
-    "m05": "raw_data_3/Enaho01a-2024-500.csv",
-    "sum": "raw_data_3/Sumaria-2024.csv",
-}
+# ════════════════════════════════════════════════════════════════════════════
+# INEI: Descarga de microdata ENAHO 2024
+# ════════════════════════════════════════════════════════════════════════════
+# Patrón verificado de URL:
+#   https://proyectos.inei.gob.pe/iinei/srienaho/descarga/CSV/{cod_encuesta}-Modulo{XX}.zip
+# Encuesta 966 = ENAHO Metodología ACTUALIZADA — Condiciones de Vida y Pobreza,
+# año 2024, período Anual (Ene-Dic).
+INEI_BASE_URL = "https://proyectos.inei.gob.pe/iinei/srienaho/descarga/CSV"
+INEI_SURVEY_CODE = "966"
+INEI_USER_AGENT = "Mozilla/5.0"
+
+# (módulo_INEI, archivo_CSV_objetivo, alias_interno)
+# El alias se usa luego para indexar los DataFrames en phase_1_preprocess.
+INEI_MODULES = [
+    ("01", "Enaho01-2024-100.csv",  "m01"),  # Vivienda
+    ("02", "Enaho01-2024-200.csv",  "m02"),  # Miembros del hogar
+    ("03", "Enaho01A-2024-300.csv", "m03"),  # Educación
+    ("05", "Enaho01a-2024-500.csv", "m05"),  # Empleo + Billetera
+    ("18", "Enaho01-2024-612.csv",  "m18"),  # Equipamiento del hogar
+    ("34", "Sumaria-2024.csv",      "sum"),  # Sumaria
+]
+
+# Después de la descarga, los CSVs viven directamente en RAW_EXTRACTED_DIR
+# (sin la subcarpeta raw_data_X/ que tenían los zips legacy).
+EXPECTED_CSVS = {alias: csv_name for _, csv_name, alias in INEI_MODULES}
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -144,37 +162,65 @@ except ImportError:
 
 
 # ════════════════════════════════════════════════════════════════════════════
-# FASE 0 — Descomprimir los 3 zips
+# FASE 0 — Descargar microdata ENAHO 2024 desde INEI
 # ════════════════════════════════════════════════════════════════════════════
-def phase_0_extract_zips():
+def phase_0_download_from_inei():
+    """Descarga los 6 módulos ENAHO 2024 directamente desde INEI.
+
+    Cada módulo viene como un .zip que contiene 1 o más CSVs (más algunos
+    diccionarios auxiliares CIIU/CIUO/CNO). Extraemos solamente el CSV que
+    necesita el pipeline y lo dejamos en RAW_EXTRACTED_DIR.
+
+    SIEMPRE descarga (no usa cache). Esto es lo que pidió el profe:
+    descarga automática y fresca cada corrida, sin depender de zips locales.
+    """
     print("=" * 70)
-    print("FASE 0 — Descomprimir raw_data_*.zip")
+    print("FASE 0 — Descargar microdata ENAHO 2024 desde INEI")
     print("=" * 70)
+    print(f"  Encuesta {INEI_SURVEY_CODE} — Condiciones de Vida y Pobreza, Anual 2024")
+    print(f"  Origen: {INEI_BASE_URL}/")
+    print(f"  Destino: {RAW_EXTRACTED_DIR}\n")
 
     RAW_EXTRACTED_DIR.mkdir(parents=True, exist_ok=True)
+    headers = {"User-Agent": INEI_USER_AGENT}
 
-    # Si los 6 CSVs ya existen, saltar
-    all_present = all((RAW_EXTRACTED_DIR / rel).exists() for rel in EXPECTED_CSVS.values())
-    if all_present:
-        print(f"  Todos los CSVs ya existen en {RAW_EXTRACTED_DIR}. Saltando extracción.")
-        return
-
-    for zip_name in ZIP_FILES:
-        zip_path = DATA_DIR / zip_name
-        if not zip_path.exists():
-            print(f"  ERROR: No se encontró {zip_path}")
-            print(f"  Asegurate de que los 3 raw_data_*.zip estén en data/clean/")
+    total_bytes = 0
+    for code, csv_name, alias in INEI_MODULES:
+        url = f"{INEI_BASE_URL}/{INEI_SURVEY_CODE}-Modulo{code}.zip"
+        print(f"  [{alias}] Modulo{code} -> {csv_name}")
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                zip_bytes = resp.read()
+        except urllib.error.HTTPError as e:
+            print(f"      ERROR HTTP {e.code}: {e.reason}")
+            print(f"      URL: {url}")
             sys.exit(1)
-        print(f"  Extrayendo {zip_name}...")
-        with zipfile.ZipFile(zip_path, "r") as zf:
-            zf.extractall(RAW_EXTRACTED_DIR)
+        except urllib.error.URLError as e:
+            print(f"      ERROR de red: {e.reason}")
+            print(f"      Verificá tu conexión a internet o si INEI está caído.")
+            sys.exit(1)
 
-    # Verificar
-    missing = [rel for rel in EXPECTED_CSVS.values() if not (RAW_EXTRACTED_DIR / rel).exists()]
-    if missing:
-        print(f"  ERROR: Faltan archivos tras extracción: {missing}")
-        sys.exit(1)
-    print(f"  OK — 6 CSVs extraídos en {RAW_EXTRACTED_DIR}\n")
+        try:
+            with zipfile.ZipFile(io.BytesIO(zip_bytes)) as zf:
+                matches = [n for n in zf.namelist() if n.endswith(csv_name)]
+                if not matches:
+                    print(f"      ERROR: {csv_name} no está en el zip de INEI.")
+                    print(f"      Contenido del zip: {zf.namelist()}")
+                    sys.exit(1)
+                with zf.open(matches[0]) as src:
+                    target = RAW_EXTRACTED_DIR / csv_name
+                    target.write_bytes(src.read())
+        except zipfile.BadZipFile:
+            print(f"      ERROR: el archivo descargado no es un ZIP válido.")
+            print(f"      Posiblemente INEI cambió el patrón de URL o devolvió HTML de error.")
+            sys.exit(1)
+
+        size_mb = target.stat().st_size / 1024 / 1024
+        total_bytes += target.stat().st_size
+        print(f"      OK ({size_mb:.2f} MB)")
+
+    print(f"\n  6 CSVs descargados — {total_bytes / 1024 / 1024:.2f} MB total\n")
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -1541,7 +1587,7 @@ def main():
     print(f"# Repo root: {REPO_ROOT}")
     print("#" * 70 + "\n")
 
-    phase_0_extract_zips()
+    phase_0_download_from_inei()
     phase_1_preprocess()
     phase_2_clean()
     phase_3_main()
