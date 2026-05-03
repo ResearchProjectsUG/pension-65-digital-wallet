@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Datos descomprimidos por el pipeline (regenerables desde data/clean/raw_data_*.zip)
+data/clean/_raw_extracted/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

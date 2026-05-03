@@ -12,6 +12,6 @@ Covariate & RD Estimate & SE & 95\% CI & BW & N \\
 \end{tabular}
 \begin{tablenotes}
 \small
-\item \textit{Notes:} RDD estimates with each covariate as the outcome. Tests are restricted to observations within the MSE-optimal bandwidth (h$^{\ast}\!=\!14.24$). A statistically significant estimate would indicate a discontinuity in pre-determined characteristics, threatening RD validity. $^{*}$ 95\% CI excludes zero. None of the covariates exhibits a discontinuity at the cutoff at the 95\% level (all CIs include zero), supporting the local continuity assumption. The \texttt{SMARTPHONE} CI is the closest case: the lower bound is essentially zero and the interval is asymmetric toward positive values, leaving open the possibility of an up-to-8.6 percentage-point smartphone gap at the cutoff that we cannot statistically rule out; we therefore caution that the smartphone-balance result is the weakest evidence in this table rather than treating it as a clean null. Slight numerical differences with Table~\ref{tab:robustness} Panel~D arise because Panel~D uses outcome-specific MSE-optimal bandwidths (15.23 / 14.29) while this table fixes the bandwidth at the primary outcome's $h^{\ast}\!=\!14.24$.
+\item \textit{Notes:} RDD estimates with each covariate as outcome, restricted to within the MSE-optimal bandwidth. $^{*}$ 95\% CI excludes zero.
 \end{tablenotes}
 \end{threeparttable}
